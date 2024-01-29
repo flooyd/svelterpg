@@ -11,34 +11,46 @@
 	let npcs = [];
 	let nearbyNPC = null;
 	let showNPCMessage = false;
+	let currentMessage = 0;
 
 	const addEnemies = () => {
 		npcs.push({
 			x: 200,
 			y: 300,
 			area: 0,
-			message: 'Hello, I am an NPC!',
+			message: [
+				'Hello, I am an NPC in area 0!',
+				'You can talk to me and other characters by pressing the ! button above my head.'
+			],
 			background: 'blue'
 		});
 		npcs.push({
 			x: 100,
 			y: 100,
 			area: 1,
-			message: 'Hello, I am an NPC in area 1!',
+			message: [
+				'Hello, I am an NPC in area 1!',
+				'Keep walking to the right to go to area 2.',
+				'You can also go back to area 0 by walking to the left.',
+				'Or you can battle a monster by walking around until you find one.'
+			],
 			background: 'blue'
 		});
 		npcs.push({
 			x: 200,
 			y: 100,
 			area: 1,
-			message: 'Hello, I am an NPC in area 1!',
 			background: 'blue'
 		});
 		npcs.push({
 			x: 300,
 			y: 100,
 			area: 3,
-			message: 'Hello, I am an NPC in area 1!',
+			message: [
+				'Hello, I am an NPC in area 3!',
+				'You can go back to area 2 by walking to the left.',
+				'Or you can battle a monster by walking around until you find one.'
+			],
 			background: 'blue'
 		});
 	};
@@ -184,6 +196,7 @@
 
 		if (!nearbyNPC) {
 			showNPCMessage = false;
+			currentMessage = 0;
 		}
 	};
 
@@ -206,6 +219,11 @@
 			}
 		});
 	};
+
+	const handleClickChat = () => {
+		showNPCMessage = !showNPCMessage;
+		currentMessage = 0;
+	};
 </script>
 
 <svelte:window on:keydown={handleKeyDown} on:keyup={handleKeyUp} />
@@ -227,20 +245,22 @@
 					></div>
 					{#if nearbyNPC === npc && npc.message}
 						<button
-							on:click={() => (showNPCMessage = !showNPCMessage)}
+							on:click={handleClickChat}
 							style="position: absolute; top: {npc.y - 32}px; left: {npc.x + 8}px;"
 						>
 							!
 						</button>
 					{/if}
 				{/if}
-				{#if nearbyNPC === npc && showNPCMessage}
+				{#if nearbyNPC === npc && showNPCMessage && npc.message}
 					<div
 						transition:fade={{ duration: 50 }}
 						class="message"
 						style="position: absolute; bottom: 0px; left: 0px; width: 100%; text-align: center;"
 					>
-						{nearbyNPC.message}
+						{nearbyNPC.message[currentMessage]}
+						<button disabled={currentMessage === nearbyNPC.message.length - 1} class="next" on:click={() => (currentMessage += 1)}>Next</button>
+						<button class="previous" disabled={currentMessage === 0} on:click={() => (currentMessage -= 1)}>Previous</button>
 					</div>
 				{/if}
 			{/each}
@@ -274,5 +294,21 @@
 		border: 1px solid black;
 		background-color: white;
 		height: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 2;
+	}
+
+	.next {
+		position: absolute;
+		right: 11.11px;
+		bottom: 11.11px;
+	}
+
+	.previous {
+		position: absolute;
+		left: 11.11px;
+		bottom: 11.11px;
 	}
 </style>
