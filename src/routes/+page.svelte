@@ -18,43 +18,69 @@
 			y: 300,
 			area: 0,
 			message: 'Hello, I am an NPC!',
-			background: 'blue',
+			background: 'blue'
 		});
 		npcs.push({
 			x: 100,
 			y: 100,
 			area: 1,
 			message: 'Hello, I am an NPC in area 1!',
-			background: 'blue',
+			background: 'blue'
 		});
 		npcs.push({
 			x: 200,
 			y: 100,
 			area: 1,
 			message: 'Hello, I am an NPC in area 1!',
-			background: 'blue',
+			background: 'blue'
 		});
 		npcs.push({
 			x: 300,
 			y: 100,
 			area: 3,
 			message: 'Hello, I am an NPC in area 1!',
-			background: 'blue',
+			background: 'blue'
 		});
 	};
 
-	const addWall = () => {
+	const addWalls = () => {
 		//add brown walls to left side of area 1
 		for (let i = 0; i < 500; i += 32) {
 			npcs.push({
 				x: 0,
 				y: i,
 				area: 0,
-				background: 'brown',
-				fadeDirection: 'in',
+				background: 'brown'
 			});
 		}
-
+		//add brown walls to top of all areas
+		for (let i = 0; i < 500; i += 32) {
+			npcs.push({
+				x: i,
+				y: 0,
+				area: 0,
+				background: 'brown'
+			});
+			npcs.push({
+				x: i,
+				y: 0,
+				area: 1,
+				background: 'brown'
+			});
+			npcs.push({
+				x: i,
+				y: 0,
+				area: 2,
+				background: 'brown'
+			});
+			npcs.push({
+				x: i,
+				y: 0,
+				area: 3,
+				background: 'brown'
+			});
+		}
+		//add brown walls to right side of area 1
 	};
 
 	const move = () => {
@@ -119,7 +145,7 @@
 		};
 
 		addEnemies();
-		addWall();
+		addWalls();
 		gameLoop();
 
 		ready = true;
@@ -149,27 +175,22 @@
 
 	const detectNearbyNPC = () => {
 		//detect if player is within 100px of an npc
-		nearbyNPC = npcs.find((npc) => {
-			return (
-				npc.area === area &&
-				Math.abs(npc.x - playerX) < 64 &&
-				Math.abs(npc.y - playerY) < 64
-			);
-		}) || null;
+		nearbyNPC =
+			npcs.find((npc) => {
+				return (
+					npc.area === area && Math.abs(npc.x - playerX) < 64 && Math.abs(npc.y - playerY) < 64
+				);
+			}) || null;
 
 		if (!nearbyNPC) {
 			showNPCMessage = false;
 		}
-    };
+	};
 
 	const detectCollisions = () => {
 		//prevent player from walking through npcs
 		npcs.forEach((npc) => {
-			if (
-				npc.area === area &&
-				Math.abs(npc.x - playerX) < 34 &&
-				Math.abs(npc.y - playerY) < 34
-			) {
+			if (npc.area === area && Math.abs(npc.x - playerX) < 34 && Math.abs(npc.y - playerY) < 34) {
 				if (keys.w) {
 					playerY += playerSpeed;
 				}
@@ -185,8 +206,6 @@
 			}
 		});
 	};
-
-
 </script>
 
 <svelte:window on:keydown={handleKeyDown} on:keyup={handleKeyUp} />
@@ -208,7 +227,7 @@
 					></div>
 					{#if nearbyNPC === npc && npc.message}
 						<button
-							on:click={() => showNPCMessage = !showNPCMessage}
+							on:click={() => (showNPCMessage = !showNPCMessage)}
 							style="position: absolute; top: {npc.y - 32}px; left: {npc.x + 8}px;"
 						>
 							!
@@ -216,14 +235,14 @@
 					{/if}
 				{/if}
 				{#if nearbyNPC === npc && showNPCMessage}
-				<div
-					transition:fade={{duration: 50}}
-					class="message"
-					style="position: absolute; bottom: 0px; left: 0px; width: 100%; text-align: center;"
-				>
-					{nearbyNPC.message}
-				</div>
-			{/if}
+					<div
+						transition:fade={{ duration: 50 }}
+						class="message"
+						style="position: absolute; bottom: 0px; left: 0px; width: 100%; text-align: center;"
+					>
+						{nearbyNPC.message}
+					</div>
+				{/if}
 			{/each}
 		</div>
 	{/if}
